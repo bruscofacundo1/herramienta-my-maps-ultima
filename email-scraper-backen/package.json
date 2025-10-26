@@ -1,0 +1,23 @@
+{
+  "name": "email-scraper-backend",
+  "version": "1.0.0",
+  "description": "Backend para extraer correos electrónicos de websites",
+  "main": "server-simple.js",
+  "scripts": {
+    "start": "node server-simple.js",
+    "dev": "nodemon server-simple.js",
+    "test": "node test.js"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "node-fetch": "^2.6.7",
+    "cheerio": "^1.0.0-rc.12",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  },
+  "keywords": ["email", "scraper", "backend", "cheerio"],
+  "author": "Tu Nombre",
+  "license": "MIT"
+}
