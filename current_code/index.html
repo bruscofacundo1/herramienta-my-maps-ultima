@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Google Maps - Búsqueda Mejorada</title>
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+    <meta charset="utf-8">
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #map {
+        height: 83%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+      #right-panel {
+        font-family: 'Roboto','sans-serif';
+        line-height: 30px;
+        padding-left: 10px;
+      }
+
+      /* #places{ */
+        /* width: 50% */
+      /* } */
+
+      #right-panel select, #right-panel input {
+        font-size: 10px;
+      }
+
+      #right-panel select {
+        width: 100%;
+      }
+
+      #right-panel i {
+        font-size: 12px;
+      }
+      #right-panel {
+        font-family: Arial, Helvetica, sans-serif;
+        border: 1px solid #999;
+        background: #fff;
+      }
+      h2 {
+        font-size: 22px;
+        margin: 0 0 5px 0;
+      }
+      ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        height: 271px;
+        width: 200px;
+        overflow-y: scroll;
+      }
+      li {
+        background-color: #f1f1f1;
+        padding: 10px;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+      li:nth-child(odd) {
+        background-color: #fcfcfc;
+      }
+      #more {
+        width: 100%;
+        margin: 5px 0 0 0;
+      }
+      #pac-input {
+          background-color: #fff;
+          font-family: Roboto;
+          font-size: 15px;
+          font-weight: 300;
+          margin-left: 12px;
+          padding: 0 11px 0 13px;
+          text-overflow: ellipsis;
+          width: 400px;
+        }
+
+      #pac-input:focus {
+        border-color: #4d90fe;
+      }
+      
+      /* Estilos para los nuevos controles */
+      #drawing-controls {
+        margin: 10px;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #999;
+      }
+      #polygons-panel {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        width: 250px;
+        background: #fff;
+        border: 1px solid #999;
+        padding: 10px;
+        max-height: 40%;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        border-radius: 4px;
+      }
+      #circles-panel {
+        position: absolute;
+        top: 250px; /* Ajusta esta posición para que no se superponga con el panel de polígonos */
+        right: 10px;
+        width: 250px;
+        background: #fff;
+        border: 1px solid #999;
+        padding: 10px;
+        max-height: 40%;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        border-radius: 4px;
+      }
+      
+      #controls-panel {
+        position: absolute;
+        top: 490px; /* Ajusta esta posición para que no se superponga con los paneles de polígonos y círculos */
+        right: 10px;
+        width: 250px;
+        background: #fff;
+        border: 1px solid #999;
+        padding: 10px;
+        max-height: 40%;
+        overflow-y: auto;
+        z-index: 100;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+        border-radius: 4px;
+      }
+      
+      .control-section {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .results-header {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
+      }
+      
+      .results-count {
+        font-size: 24px;
+        font-weight: bold;
+        color: #4285F4;
+        text-align: center;
+        padding: 5px;
+        background-color: #f8f8f8;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        margin: 5px 0;
+      }
+      
+      .results-details {
+        font-size: 12px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 5px;
+      }
+      
+      .action_buttons {
+        margin: 5px 0;
+        display: block;
+        width: 100%;
+        padding: 5px;
+        background-color: #4285F4;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+      }
+      
+      .action_buttons:hover {
+        background-color: #3367D6;
+      }
+      
+      #clearBtn {
+        background-color: #DB4437;
+      }
+      
+      #clearBtn:hover {
+        background-color: #C53929;
+      }
+      
+      #details, #update_name {
+        background-color: #F4B400;
+        color: #333;
+      }
+      
+      #details:hover, #update_name:hover {
+        background-color: #E09C00;
+      }
+      
+      #save {
+        background-color: #0F9D58;
+      }
+      
+      #save:hover {
+        background-color: #0B8043;
+      }
+      
+      .polygon-item, .circle-item {
+        margin-bottom: 10px;
+        padding: 5px;
+        border-bottom: 1px solid #eee;
+      }
+      
+      .polygon-item span, .circle-item span {
+        margin: 0 5px;
+      }
+      
+      .polygon-item button, .circle-item button {
+        margin: 0 2px;
+      }
+      
+      .hidden {
+        display: none;
+      }
+      
+      #polygon-form {
+        margin-top: 10px;
+        padding: 10px;
+        border-top: 1px solid #eee;
+      }
+      
+      /* Panel de búsqueda por zona geográfica eliminado */
+      
+      input[type="text"] {
+        width: 90%;
+        padding: 5px;
+        margin: 5px 0;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+      
+      /* Estilos para el logo */
+      #logo-container {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        z-index: 100;
+        background-color: rgba(255, 255, 255, 0.95);
+        padding: 10px 15px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+      
+      #logo {
+        height: 45px;
+        width: auto;
+      }
+      
+      #brand-name {
+        font-family: 'Roboto', sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        color: #333;
+        letter-spacing: 0.5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+    
+    <!-- Logo de Gerenciando Canales -->
+    <div id="logo-container">
+      <img id="logo" src="images/logo.png" alt="Gerenciando Canales">
+      <span id="brand-name">Gerenciando Canales</span>
+    </div>
+    
+    <div>
+      <!-- Keywords con diseño horizontal como en la imagen de referencia -->
+      <div style="margin: 10px 0; display: flex; align-items: center;">
+        <div style="margin-right: 10px; font-weight: bold;">Keywords</div>
+        <input type="text" name="keywords" class="keyword" value="Ferreteria" style="margin-right: 5px; width: 200px; padding: 2px 5px; border: 1px solid #ccc;">
+        <div id="additional-keywords" style="display: flex; align-items: center;"></div>
+        <button onclick="appendKeyword()" class="btn btn-add" style="background-color: #4285F4; color: white; border: none; border-radius: 4px; padding: 2px 10px; margin: 0 5px; cursor: pointer;">+</button>
+      </div>
+      
+      <!-- Controles de dibujo -->
+      <div id="drawing-controls">
+        <label><input type="radio" name="drawingMode" value="circle" checked> Círculo</label>
+        <label><input type="radio" name="drawingMode" value="polygon"> Polígono</label>
+        <button id="finishPolygon" disabled>Finalizar Polígono</button>
+        <button id="finishCircle" disabled>Finalizar Círculo</button>
+      </div>
+      
+      <!-- El panel de búsqueda por zona geográfica se ha movido al lateral derecho -->
+      
+      <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+    </div>
+    <div id="map"></div>
+    
+    <!-- Panel de polígonos -->
+    <div id="polygons-panel">
+      <h3>Polígonos guardados</h3>
+      <div id="polygons-list"></div>
+      <div id="polygon-form" class="hidden">
+        <input type="text" id="polygon-name" placeholder="Nombre del polígono">
+        <button id="save-polygon">Guardar</button>
+        <button id="cancel-polygon">Cancelar</button>
+      </div>
+    </div>
+
+    <div id="circles-panel" class="hidden">
+      <h3>Círculos guardados</h3>
+      <div id="circles-list"></div>
+      <div id="circle-form" class="hidden">
+        <input type="text" id="circle-name" placeholder="Nombre del círculo">
+        <button id="save-circle">Guardar</button>
+        <button id="cancel-circle">Cancelar</button>
+      </div>
+    </div>
+    
+    <!-- Panel de búsqueda por zona geográfica eliminado a petición del usuario -->
+    
+    <!-- Panel de controles -->
+    <div id="controls-panel">
+      <h3>Controles</h3>
+      <div class="control-section">
+        <div class="results-header">Resultados encontrados:</div>
+        <div class="results-count" id="resultadosLbl">0</div>
+        <div class="results-details">(<span id="detalles_count">0</span> detalles descargados)</div>
+      </div>
+      <div class="control-section">
+        <input type="button" id="clearBtn" class="action_buttons" value="Limpiar Resultados">
+        <input type="button" id="details" class="action_buttons" value="Actualizar Detalles" onclick="getDetails()">
+        <input type="button" id="save" class="action_buttons" value="DESCARGAR EXCEL (.xlsx)">
+      </div>
+      <div class="control-section">
+        <label>Nombre archivo:</label>
+        <input type="text" id="csvfn" value="busqueda">
+        <input type="button" id="update_name" value="Actualizar">
+      </div>
+	      <div class="control-section">
+	        <label>Radio:</label>
+	        <input type="text" id="radio" value="1000">
+	      </div>
+	      <div class="control-section">
+	        <label><input type="checkbox" id="polygonFilterToggle" checked> Aplicar Filtro de Polígono</label>
+	      </div>
+	      <div class="control-section">
+	        <button id="activateSearchMode" class="action_buttons" onclick="activateSearchMode()">Activar Búsqueda por Clic</button>
+	      </div>
+	      <script>
+	        function activateSearchMode() {
+	          window.drawingMode = 'search';
+	          enableCircleDrawing(); // Reutiliza la función para activar el listener de clic
+	          alert("Modo de búsqueda por clic activado. Haz clic en el mapa para iniciar la búsqueda.");
+	        }
+	      </script>
+    </div>
+    
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script src="process.js"></script>
+    <script src="markers.js"></script>
+    <script src="persist.js"></script>
+    <script src="vis.js"></script>
+    <script src="details.js"></script>
+    <script src="polygons.js"></script>
+    <script src="circles.js"></script>
+    <script src="drawing.js"></script>
+ <script src="initGeoSearch.js"></script>
+    <script src="cordoba_filter.js"></script>
+    <script src="keywords.js"></script>
+    <script src="marker_colors.js"></script>
+    <script src="sheets_export.js"></script>
+    <script src="email_detector.js"></script>
+    <script src="progress_bar.js"></script>
+    <script src="excel_formatter.js"></script>
+    <script src="auto_excel_exporter.js"></script>
+    <script src="format_button.js"></script>
+    <script src="map.js"></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBgiM5kh2JIkDLmp3Yymu70H1lt8iyTf30&libraries=places,drawing,geometry&callback=initMap" async defer></script>
+  </body>
+</html>
