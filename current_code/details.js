@@ -214,7 +214,7 @@ function findEmailsInGoogleData(details) {
 // Función para comunicarse con el backend de scraping
 async function scrapeEmailsFromBackend(website, businessName) {
   try {
-    var response = await fetch('http://localhost:3001/api/scrape-emails', {
+    var response = await fetch('https://scraper-email-i9s9.onrender.com/api/scrape-emails', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
