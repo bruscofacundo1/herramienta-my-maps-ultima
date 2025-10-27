@@ -53,7 +53,7 @@ function findObfuscatedEmails($) {
   return Array.from(emails);
 }
 
-// Función de validación de correos MEJORADA (TU BASE)
+// Función de validación de correos MEJORADA (TU BASE + FILTROS)
 function isValidEmail(email) {
   if (!email || typeof email !== 'string') return false;
   
@@ -250,7 +250,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
         emailMatches.forEach(email => {
           emails.add(email);
           strategies.contact++;
-          console.log('✅ Contacto encontrado (Texto):', email);
+          // console.log('✅ Contacto encontrado (Texto):', email);
         });
       });
       
@@ -262,7 +262,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
           emailMatches.forEach(email => {
             emails.add(email);
             strategies.contact++;
-            console.log('✅ Contacto encontrado (Href):', email);
+            // console.log('✅ Contacto encontrado (Href):', email);
           });
         }
       });
@@ -280,7 +280,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
         emailMatches.forEach(email => {
           emails.add(email);
           strategies.meta++;
-          console.log('✅ Meta tag encontrado:', email);
+          // console.log('✅ Meta tag encontrado:', email);
         });
       }
     });
@@ -318,7 +318,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
         emailMatches.forEach(email => {
           emails.add(email);
           strategies.footer++;
-          console.log('✅ Footer/Header encontrado (Texto):', email);
+          // console.log('✅ Footer/Header encontrado (Texto):', email);
         });
         
         // Buscar en atributos de datos que puedan contener emails
@@ -330,7 +330,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
             emailMatches.forEach(email => {
               emails.add(email);
               strategies.footer++;
-              console.log(`✅ Footer encontrado (${attr}):`, email);
+              // console.log(`✅ Footer encontrado (${attr}):`, email);
             });
           }
         });
@@ -344,7 +344,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
           emailMatches.forEach(email => {
             emails.add(email);
             strategies.footer++;
-            console.log('✅ Footer/Header encontrado (Href):', email);
+            // console.log('✅ Footer/Header encontrado (Href):', email);
           });
         }
         
@@ -354,7 +354,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
         textEmails.forEach(email => {
           emails.add(email);
           strategies.footer++;
-          console.log('✅ Footer/Header encontrado (Link Text):', email);
+          // console.log('✅ Footer/Header encontrado (Link Text):', email);
         });
       });
     });
@@ -366,7 +366,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
     textEmails.forEach(email => {
       emails.add(email);
       strategies.text++;
-      console.log('✅ Texto general encontrado:', email);
+      // console.log('✅ Texto general encontrado:', email);
     });
     
     // ESTRATEGIA 6: Detección de correos ofuscados
@@ -375,11 +375,11 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
     obfuscatedEmails.forEach(email => {
       emails.add(email);
       strategies.obfuscated++;
-      console.log('✅ Email ofuscado encontrado:', email);
+      // console.log('✅ Email ofuscado encontrado:', email);
     });
     
     const finalEmails = Array.from(emails);
-    console.log('✅ Correos finales encontrados:', finalEmails);
+    // console.log('✅ Correos finales encontrados:', finalEmails);
     
     let result = {
       success: true,
@@ -413,10 +413,11 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
           }
       }).get().filter(url => url !== null);
 
-      // Rutas comunes a probar
+      // Rutas comunes a probar (AÑADIDO SOPORTE PARA SHOPIFY)
       const commonPaths = [
           'contacto', 'contactanos', 'contact', 'about', 'about-us', 'nosotros',
-          'get-in-touch', 'contact-us', 'contacto.php', 'contact.html'
+          'get-in-touch', 'contact-us', 'contacto.php', 'contact.html',
+          'pages/contacto', 'pages/contact', 'page/contacto', 'page/contact' // RUTAS SHOPIFY
       ];
       const commonUrls = commonPaths.map(path => new URL(path, normalizedUrl).href);
       
@@ -461,7 +462,7 @@ async function scrapeEmailsFromWebsite(websiteUrl, businessName = '') {
                   result.totalEmails++;
                   found = true;
                   strategies.contactPage++;
-                  console.log(`✅ Correo encontrado en página de contacto: ${email}`);
+                  // console.log(`✅ Correo encontrado en página de contacto: ${email}`);
               }
           });
           
@@ -707,7 +708,7 @@ app.use((req, res) => {
 // Iniciar servidor
 const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
-  console.log('🚀 Servidor de email scraper iniciado (versión MEJORADA CON CACHE)');
+  console.log('🚀 Servidor de email scraper iniciado (versión FINAL)');
   console.log(`📡 Puerto: ${PORT}`);
   console.log(`🌐 Endpoints disponibles:`);
   console.log(`   POST  http://localhost:${PORT}/api/scrape-emails  - Extraer correos` );
@@ -717,5 +718,5 @@ app.listen(PORT, () => {
   console.log(`   POST  http://localhost:${PORT}/api/clear-cache     - Limpiar cache` );
   console.log(`   POST  http://localhost:${PORT}/api/debug-scrape     - Depurar sitio web` );
   console.log('✅ Servidor listo para recibir solicitudes');
-  console.log('🔥 Versión mejorada: Con cache, detección de correos ofuscados y selectores expandidos');
+  console.log('🔥 Versión final: Con todas las mejoras de scraping y navegación');
 });
